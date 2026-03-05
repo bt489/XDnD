@@ -1,0 +1,515 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base layer ── */
+
+:root {
+  --void: #08080f;
+  --abyss: #0d0d1a;
+  --gold: #d4a843;
+  --gold-pale: #e8c76a;
+  --parchment: #e8d5a8;
+  --ink: #1a0e08;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body), "Georgia", serif;
+  color: var(--parchment);
+  background: var(--void);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: rgba(212, 168, 67, 0.35);
+  color: #f4e4c1;
+}
+
+/* ── Atmospheric background ── */
+
+.sanctum-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74, 52, 117, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(212, 168, 67, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(122, 22, 22, 0.03) 0%, transparent 50%),
+    var(--void);
+}
+
+/* Vignette overlay */
+.sanctum-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(8, 8, 15, 0.7) 100%);
+}
+
+/* Noise texture */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* ── Particles ── */
+
+.particle {
+  position: fixed;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--gold-pale);
+  box-shadow: 0 0 6px 1px rgba(212, 168, 67, 0.3);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Parchment card ── */
+
+.parchment-card {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(244, 228, 193, 0.2) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 80%, rgba(212, 185, 138, 0.15) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 50%, rgba(196, 168, 106, 0.08) 0%, transparent 60%),
+    linear-gradient(170deg, #f0deb4 0%, #e8d5a8 20%, #dcc78f 50%, #d0b878 80%, #c4a86a 100%);
+  color: var(--ink);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 2px 30px rgba(26, 14, 8, 0.18),
+    inset 0 -2px 30px rgba(26, 14, 8, 0.12),
+    inset 20px 0 40px rgba(26, 14, 8, 0.06),
+    inset -20px 0 40px rgba(26, 14, 8, 0.06),
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 80px rgba(212, 168, 67, 0.08);
+}
+
+/* Parchment grain texture */
+.parchment-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(26, 14, 8, 0.008) 3px,
+      rgba(26, 14, 8, 0.008) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 5px,
+      rgba(26, 14, 8, 0.005) 5px,
+      rgba(26, 14, 8, 0.005) 6px
+    );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Burnt/aged edge effect */
+.parchment-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 60px rgba(160, 125, 46, 0.1),
+    inset 0 0 120px rgba(26, 14, 8, 0.08);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ornate border for card */
+.ornate-border {
+  border: 1px solid rgba(160, 125, 46, 0.3);
+  outline: 1px solid rgba(160, 125, 46, 0.08);
+  outline-offset: 4px;
+}
+
+/* ── D20 Die ── */
+
+.d20-die {
+  width: 72px;
+  height: 72px;
+  position: relative;
+  perspective: 200px;
+}
+
+.d20-face {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(135deg, #d4a843 0%, #e8c76a 40%, #d4a843 60%, #a07d2e 100%);
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-cinzel), serif;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 1.35rem;
+  box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* ── Section headers ── */
+
+.section-header {
+  font-family: var(--font-cinzel), serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d4a843;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.section-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, #d4a843 0%, rgba(212, 168, 67, 0.2) 80%, transparent 100%);
+}
+
+/* Parchment variant */
+.section-header-ink {
+  color: var(--ink);
+}
+
+.section-header-ink::after {
+  background: linear-gradient(90deg, rgba(26, 14, 8, 0.5) 0%, rgba(26, 14, 8, 0.1) 80%, transparent 100%);
+}
+
+/* ── Stat blocks ── */
+
+.stat-block {
+  background: rgba(26, 14, 8, 0.04);
+  border: 1px solid rgba(160, 125, 46, 0.25);
+  border-radius: 2px;
+  padding: 0.5rem 0.375rem;
+  text-align: center;
+  min-width: 4.25rem;
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.stat-block::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 25%;
+  right: 25%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(160, 125, 46, 0.5), transparent);
+}
+
+.stat-block:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(212, 168, 67, 0.15);
+}
+
+/* Dark variant for character sheet */
+.stat-block-dark {
+  background: rgba(212, 168, 67, 0.04);
+  border-color: rgba(212, 168, 67, 0.15);
+}
+
+.stat-block-dark:hover {
+  background: rgba(212, 168, 67, 0.08);
+}
+
+/* ── Tabs ── */
+
+.tab-active {
+  color: #d4a843;
+  position: relative;
+}
+
+.tab-active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4a843, transparent);
+}
+
+.tab-inactive {
+  color: rgba(232, 213, 168, 0.4);
+  transition: color 0.2s ease;
+}
+
+.tab-inactive:hover {
+  color: rgba(232, 213, 168, 0.8);
+}
+
+/* ── Glass panels ── */
+
+.glass-panel {
+  background: rgba(13, 13, 26, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 168, 67, 0.08);
+  border-radius: 8px;
+}
+
+.glass-panel-gold {
+  background: rgba(212, 168, 67, 0.03);
+  border: 1px solid rgba(212, 168, 67, 0.12);
+  border-radius: 6px;
+}
+
+/* ── Input fields ── */
+
+.arcane-input {
+  background: rgba(13, 13, 26, 0.8);
+  border: 1px solid rgba(212, 168, 67, 0.15);
+  border-radius: 6px;
+  color: var(--parchment);
+  font-family: var(--font-body), serif;
+  font-size: 1.1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.arcane-input:focus {
+  outline: none;
+  border-color: rgba(212, 168, 67, 0.5);
+  box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.08), 0 0 20px rgba(212, 168, 67, 0.06);
+}
+
+.arcane-input::placeholder {
+  color: rgba(232, 213, 168, 0.2);
+  font-style: italic;
+}
+
+/* ── Buttons ── */
+
+.btn-gold {
+  background: linear-gradient(135deg, #d4a843 0%, #b8922e 100%);
+  color: var(--ink);
+  font-family: var(--font-cinzel), serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.btn-gold:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(212, 168, 67, 0.3), 0 0 40px rgba(212, 168, 67, 0.1);
+}
+
+.btn-gold:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-gold:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(212, 168, 67, 0.2);
+  color: rgba(232, 213, 168, 0.7);
+  font-family: var(--font-cinzel), serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  border-color: rgba(212, 168, 67, 0.4);
+  color: var(--parchment);
+  background: rgba(212, 168, 67, 0.04);
+}
+
+/* ── Scrollbar ── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 168, 67, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 168, 67, 0.35);
+}
+
+/* ── Utility: staggered reveals ── */
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* ── Spell slot pips (dark variant) ── */
+
+.pip-filled {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e8c76a, #d4a843);
+  border: 1px solid rgba(160, 125, 46, 0.6);
+  box-shadow: 0 0 6px rgba(212, 168, 67, 0.3);
+}
+
+.pip-empty {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid rgba(212, 168, 67, 0.2);
+}
+
+/* ── Ornate divider ── */
+
+.ornate-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(160, 125, 46, 0.15) 15%,
+    rgba(160, 125, 46, 0.35) 50%,
+    rgba(160, 125, 46, 0.15) 85%,
+    transparent 100%
+  );
+  position: relative;
+}
+
+.ornate-divider::before {
+  content: "\2756";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  color: rgba(160, 125, 46, 0.4);
+  background: var(--void);
+  padding: 0 8px;
+}
+
+/* parchment variant */
+.ornate-divider-ink::before {
+  color: rgba(26, 14, 8, 0.25);
+  background: #dcc78f;
+}
+
+/* ── Arcane background animations ── */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes glyphFloat {
+  0%, 100% {
+    transform: translateY(0) scale(0.92);
+    filter: brightness(0.6);
+  }
+  50% {
+    transform: translateY(-30px) scale(1);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes wispDraw {
+  0% {
+    stroke-dashoffset: 800;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -800;
+  }
+}
+
+@keyframes runeDrift {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    filter: brightness(0.5);
+  }
+  50% {
+    transform: translateY(-25px) rotate(8deg);
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes itemFloat {
+  0%, 100% {
+    transform: translateY(0);
+    filter: brightness(0.5);
+  }
+  50% {
+    transform: translateY(-20px);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes candleRise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(-110vh) translateX(30px);
+    opacity: 0;
+  }
+}
