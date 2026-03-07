@@ -172,20 +172,32 @@ export function generateBookmarkletCode(appOrigin: string, sessionToken: string)
     completeness: 'full'
   };
 
-  // Send to app
+  // Send to app via hidden iframe form (bypasses CSP fetch restrictions)
   try {
-    const res = await fetch(APP_ORIGIN + '/api/receive', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: TOKEN, profile })
-    });
-    if (res.ok) {
-      toast('✨ Scrying complete! Return to Roll for Profile.');
-    } else {
-      toast('⚠️ Failed to send data. Check the app.');
-    }
+    const iframe = document.createElement('iframe');
+    iframe.name = 'xdnd_submit';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = APP_ORIGIN + '/api/receive';
+    form.target = 'xdnd_submit';
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = JSON.stringify({ token: TOKEN, profile });
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+
+    toast('✨ Scrying complete! Return to Roll for Profile.');
+    setTimeout(() => iframe.remove(), 5000);
   } catch(e) {
-    toast('⚠️ Network error. Is the app running?');
+    toast('⚠️ Error sending data: ' + e.message);
   }
 })();
   `.trim();

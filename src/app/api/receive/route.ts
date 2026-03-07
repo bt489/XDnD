@@ -34,8 +34,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const { token, profile } = body;
+    // Support both JSON and form-encoded data (form used to bypass CSP on x.com)
+    const contentType = req.headers.get("content-type") || "";
+    let token: string | undefined;
+    let profile: ScrapedProfile | undefined;
+
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      const formData = await req.formData();
+      const dataStr = formData.get("data");
+      if (typeof dataStr === "string") {
+        const parsed = JSON.parse(dataStr);
+        token = parsed.token;
+        profile = parsed.profile;
+      }
+    } else {
+      const body = await req.json();
+      token = body.token;
+      profile = body.profile;
+    }
 
     if (!token || !profile) {
       return NextResponse.json(
