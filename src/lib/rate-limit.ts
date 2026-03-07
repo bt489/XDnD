@@ -98,6 +98,6 @@ export const RATE_LIMITS: Record<string, RateLimitConfig[]> = {
     { endpoint: "/api/scrape-nitter", maxRequests: 10, windowSeconds: 15 * 60 },
   ],
   "/api/receive": [
-    { endpoint: "/api/receive", maxRequests: 30, windowSeconds: 15 * 60 },
+    { endpoint: "/api/receive-post", maxRequests: 30, windowSeconds: 15 * 60 },
   ],
 };
