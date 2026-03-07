@@ -47,14 +47,27 @@ export default function LoadingState({ stage }: LoadingStateProps) {
 
   return (
     <div className="flex flex-col items-center gap-10 opacity-0 animate-fade-in-up">
-      {/* Glowing d20 */}
+      {/* 3D d20 */}
       <div className="relative">
         {/* Ambient glow */}
         <div className="absolute inset-0 scale-[2] rounded-full bg-gold/5 blur-3xl animate-ember-glow" />
         <div className="absolute inset-0 scale-150 rounded-full bg-arcane/10 blur-2xl" />
 
-        <div className="d20-die animate-dice-tumble relative z-10">
-          <div className="d20-face">{roll}</div>
+        <div className="d20-scene relative z-10">
+          <div className="d20-cube">
+            {/* Top faces */}
+            <div className="d20-tri d20-tri-1"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-2"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-3"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-4"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-5"><span>{roll}</span></div>
+            {/* Bottom faces */}
+            <div className="d20-tri d20-tri-6"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-7"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-8"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-9"><span>{roll}</span></div>
+            <div className="d20-tri d20-tri-10"><span>{roll}</span></div>
+          </div>
         </div>
       </div>
 
