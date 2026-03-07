@@ -15,6 +15,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.json(null, { headers: CORS_HEADERS });
   }
 
+  // Don't rate limit GET polling on /api/receive (frontend polls every 2s)
+  if (pathname === "/api/receive" && req.method === "GET") {
+    return NextResponse.next();
+  }
+
   // Find matching rate limit config
   const configs = RATE_LIMITS[pathname];
   if (!configs) return NextResponse.next();
