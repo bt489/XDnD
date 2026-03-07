@@ -172,30 +172,32 @@ export function generateBookmarkletCode(appOrigin: string, sessionToken: string)
     completeness: 'full'
   };
 
-  // Send to app via hidden iframe form (bypasses CSP fetch restrictions)
+  // Send data via popup window + postMessage (bypasses all CSP restrictions)
   try {
-    const iframe = document.createElement('iframe');
-    iframe.name = 'xdnd_submit';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = APP_ORIGIN + '/api/receive';
-    form.target = 'xdnd_submit';
-
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'data';
-    input.value = JSON.stringify({ token: TOKEN, profile });
-    form.appendChild(input);
-
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
-
-    toast('✨ Scrying complete! Return to Roll for Profile.');
-    setTimeout(() => iframe.remove(), 5000);
+    const popup = window.open(APP_ORIGIN + '/receive-data', 'xdnd_receive', 'width=400,height=300');
+    if (!popup) {
+      toast('⚠️ Popup blocked! Please allow popups for this site and try again.');
+      return;
+    }
+    // Wait for popup to load, then send data
+    let attempts = 0;
+    const sendInterval = setInterval(() => {
+      attempts++;
+      popup.postMessage({ token: TOKEN, profile }, APP_ORIGIN);
+      if (attempts > 20) {
+        clearInterval(sendInterval);
+        toast('⚠️ Timed out sending data. Please try again.');
+      }
+    }, 500);
+    // Listen for confirmation
+    window.addEventListener('message', function handler(e) {
+      if (e.data === 'xdnd_received') {
+        clearInterval(sendInterval);
+        window.removeEventListener('message', handler);
+        toast('✨ Scrying complete! Return to Roll for Profile.');
+        setTimeout(() => popup.close(), 1000);
+      }
+    });
   } catch(e) {
     toast('⚠️ Error sending data: ' + e.message);
   }
