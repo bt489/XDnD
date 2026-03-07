@@ -25,12 +25,29 @@ export async function POST(req: NextRequest) {
   };
 
   try {
+    // Reject oversized payloads
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength, 10) > 100_000) {
+      return NextResponse.json(
+        { success: false, error: "Payload too large" },
+        { status: 413, headers }
+      );
+    }
+
     const body = await req.json();
     const { token, profile } = body;
 
     if (!token || !profile) {
       return NextResponse.json(
         { success: false, error: "Missing token or profile" },
+        { status: 400, headers }
+      );
+    }
+
+    // Validate token format (alphanumeric, 10-50 chars)
+    if (typeof token !== "string" || token.length < 10 || token.length > 50 || !/^[a-z0-9]+$/i.test(token)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid token format" },
         { status: 400, headers }
       );
     }

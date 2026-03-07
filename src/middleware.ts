@@ -1,0 +1,46 @@
+import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+
+export async function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+
+  // Find matching rate limit config
+  const configs = RATE_LIMITS[pathname];
+  if (!configs) return NextResponse.next();
+
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+
+  for (const config of configs) {
+    const result = await checkRateLimit(
+      ip,
+      config.endpoint,
+      config.maxRequests,
+      config.windowSeconds
+    );
+
+    if (!result.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Too many requests. Please try again later.",
+          retryAfter: result.retryAfter,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(result.retryAfter ?? 60),
+          },
+        }
+      );
+    }
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/api/generate", "/api/scrape", "/api/scrape-nitter", "/api/receive"],
+};

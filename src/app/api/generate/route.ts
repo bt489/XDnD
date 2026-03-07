@@ -79,7 +79,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "No profile data provided" }, { status: 400 });
     }
 
+    // Input validation
+    if (profile.handle && profile.handle.length > 15) {
+      return NextResponse.json({ success: false, error: "Invalid handle" }, { status: 400 });
+    }
+    if (profile.recentTweets && profile.recentTweets.length > 50) {
+      profile.recentTweets = profile.recentTweets.slice(0, 50);
+    }
+
     const profileSummary = buildProfileSummary(profile, manualOverrides);
+
+    if (profileSummary.length > 20_000) {
+      return NextResponse.json({ success: false, error: "Profile data too large" }, { status: 400 });
+    }
 
     // Stage 1: Behavioral profile
     const stage1Response = await anthropic.messages.create({

@@ -110,15 +110,23 @@ export default function BookmarkletSetup({
         ))}
 
         {/* Bookmarklet draggable */}
-        <div className="pt-2 flex justify-center">
+        <div className="pt-4 pb-2 flex flex-col items-center gap-3">
+          <div className="text-parchment/50 text-xs font-body tracking-wide flex items-center gap-2">
+            <span>&#8595;</span>
+            <span>Drag this to your bookmarks bar</span>
+            <span>&#8595;</span>
+          </div>
           <a
             href={bookmarkletUrl || "#"}
             onClick={(e) => e.preventDefault()}
-            className="inline-block px-5 py-2.5 border border-gold/30 rounded-sm font-cinzel text-sm text-gold/90 animate-ember-glow cursor-grab hover:bg-gold/5 transition-colors duration-300 select-none"
+            className="inline-block px-8 py-3 border-2 border-gold/50 border-dashed rounded bg-gold/10 font-cinzel text-base text-gold animate-ember-glow cursor-grab hover:bg-gold/15 active:cursor-grabbing transition-colors duration-300 select-none"
             title="Drag this to your bookmarks bar"
           >
             Scry Profile
           </a>
+          <p className="text-parchment/30 text-[0.65rem] font-body italic">
+            Click &amp; drag the button above into your browser&apos;s bookmarks bar
+          </p>
         </div>
 
         {/* Polling indicator */}
