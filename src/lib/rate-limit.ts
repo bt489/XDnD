@@ -88,8 +88,8 @@ export interface RateLimitConfig {
 
 export const RATE_LIMITS: Record<string, RateLimitConfig[]> = {
   "/api/generate": [
-    { endpoint: "/api/generate", maxRequests: 3, windowSeconds: 15 * 60 },
-    { endpoint: "/api/generate-daily", maxRequests: 10, windowSeconds: 24 * 60 * 60 },
+    { endpoint: "/api/generate", maxRequests: 20, windowSeconds: 15 * 60 },
+    { endpoint: "/api/generate-daily", maxRequests: 100, windowSeconds: 24 * 60 * 60 },
   ],
   "/api/scrape": [
     { endpoint: "/api/scrape", maxRequests: 10, windowSeconds: 15 * 60 },
@@ -101,7 +101,7 @@ export const RATE_LIMITS: Record<string, RateLimitConfig[]> = {
     { endpoint: "/api/receive-post", maxRequests: 30, windowSeconds: 15 * 60 },
   ],
   "/api/generate-avatar": [
-    { endpoint: "/api/generate-avatar", maxRequests: 3, windowSeconds: 15 * 60 },
-    { endpoint: "/api/generate-avatar-daily", maxRequests: 10, windowSeconds: 24 * 60 * 60 },
+    { endpoint: "/api/generate-avatar", maxRequests: 20, windowSeconds: 15 * 60 },
+    { endpoint: "/api/generate-avatar-daily", maxRequests: 100, windowSeconds: 24 * 60 * 60 },
   ],
 };
