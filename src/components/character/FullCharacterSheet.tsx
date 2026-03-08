@@ -12,7 +12,7 @@ interface FullCharacterSheetProps {
   character: DndCharacter;
 }
 
-const TABS = ["Overview", "Combat", "Spellcasting", "Personality", "Origin"] as const;
+const TABS = ["Overview", "Combat", "Spellcasting", "Equipment", "Personality", "Origin"] as const;
 type Tab = (typeof TABS)[number];
 const STAT_ORDER: StatName[] = ["STR", "DEX", "CON", "INT", "WIS", "CHA"];
 
@@ -43,6 +43,7 @@ export default function FullCharacterSheet({ character }: FullCharacterSheetProp
         {activeTab === "Overview" && <OverviewTab character={character} />}
         {activeTab === "Combat" && <CombatTab character={character} />}
         {activeTab === "Spellcasting" && <SpellcastingTab character={character} />}
+        {activeTab === "Equipment" && <EquipmentTab character={character} />}
         {activeTab === "Personality" && <PersonalityTab character={character} />}
         {activeTab === "Origin" && <OriginTab character={character} />}
       </div>
@@ -53,8 +54,48 @@ export default function FullCharacterSheet({ character }: FullCharacterSheetProp
 // ── Overview Tab ──
 
 function OverviewTab({ character }: { character: DndCharacter }) {
+  const wisMod = calculateModifier(character.stats.WIS);
+  const perceptionProficient = character.skillProficiencies.some(
+    (s) => s.toLowerCase() === "perception"
+  );
+  const passivePerception = 10 + wisMod + (perceptionProficient ? character.proficiencyBonus : 0);
+
   return (
     <div className="space-y-8">
+      {/* Avatar + Character Info */}
+      {character.avatarUrl && (
+        <div className="flex justify-center">
+          <div
+            className="w-32 h-44 rounded overflow-hidden"
+            style={{
+              border: "1px solid rgba(212, 168, 67, 0.2)",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3), 0 0 30px rgba(212, 168, 67, 0.06)",
+            }}
+          >
+            <img
+              src={character.avatarUrl}
+              alt={`${character.name} portrait`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Appearance */}
+      {character.appearance && Object.values(character.appearance).some(Boolean) && (
+        <div>
+          <h3 className="section-header">Appearance</h3>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            {([["Age", character.appearance.age], ["Height", character.appearance.height], ["Weight", character.appearance.weight], ["Eyes", character.appearance.eyes], ["Hair", character.appearance.hair], ["Skin", character.appearance.skin]] as const).map(([label, value]) => value ? (
+              <div key={label} className="glass-panel-gold p-3 text-center">
+                <div className="font-cinzel text-[0.5rem] tracking-[0.15em] uppercase text-parchment/35 mb-1">{label}</div>
+                <div className="font-body text-parchment/80 text-sm">{value}</div>
+              </div>
+            ) : null)}
+          </div>
+        </div>
+      )}
+
       <div>
         <h3 className="section-header">Ability Scores</h3>
         <div className="flex flex-wrap justify-center gap-3">
@@ -68,6 +109,12 @@ function OverviewTab({ character }: { character: DndCharacter }) {
             />
           ))}
         </div>
+      </div>
+
+      {/* Passive Perception */}
+      <div className="glass-panel-gold p-4 flex items-center justify-between">
+        <span className="font-cinzel text-[0.6rem] tracking-[0.12em] uppercase text-parchment/50">Passive Perception</span>
+        <span className="font-cinzel text-xl text-gold font-bold">{passivePerception}</span>
       </div>
 
       <div>
@@ -104,6 +151,50 @@ function OverviewTab({ character }: { character: DndCharacter }) {
           skillProficiencies={character.skillProficiencies}
         />
       </div>
+
+      {/* Languages & Proficiencies */}
+      {(character.languages?.length > 0 || character.toolProficiencies?.length > 0) && (
+        <div>
+          <h3 className="section-header">Languages & Proficiencies</h3>
+          <div className="space-y-3">
+            {character.languages?.length > 0 && (
+              <div>
+                <div className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 mb-2">Languages</div>
+                <div className="flex flex-wrap gap-2">
+                  {character.languages.map((lang) => (
+                    <span key={lang} className="px-3 py-1 rounded-sm border border-gold/15 bg-gold/5 font-body text-parchment/75 text-sm">{lang}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {character.toolProficiencies?.length > 0 && (
+              <div>
+                <div className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 mb-2">Tool Proficiencies</div>
+                <div className="flex flex-wrap gap-2">
+                  {character.toolProficiencies.map((tool) => (
+                    <span key={tool} className="px-3 py-1 rounded-sm border border-gold/15 bg-gold/5 font-body text-parchment/75 text-sm">{tool}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Racial Traits */}
+      {character.racialTraits?.length > 0 && (
+        <div>
+          <h3 className="section-header">Racial Traits</h3>
+          <div className="space-y-2">
+            {character.racialTraits.map((trait, i) => (
+              <div key={i} className="glass-panel-gold p-3.5">
+                <h4 className="font-cinzel text-xs tracking-wider text-gold mb-1">{trait.name}</h4>
+                <p className="font-body text-parchment/60 text-sm leading-relaxed">{trait.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -133,14 +224,72 @@ function CombatTab({ character }: { character: DndCharacter }) {
         ))}
       </div>
 
-      <div className="glass-panel-gold p-4">
-        <div className="font-cinzel text-[0.55rem] tracking-[0.15em] uppercase text-parchment/35 mb-1">
-          Initiative
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="glass-panel-gold p-4">
+          <div className="font-cinzel text-[0.55rem] tracking-[0.15em] uppercase text-parchment/35 mb-1">
+            Initiative
+          </div>
+          <div className="font-cinzel text-xl text-gold">
+            {formatModifier(character.stats.DEX)}
+          </div>
         </div>
-        <div className="font-cinzel text-xl text-gold">
-          {formatModifier(character.stats.DEX)}
-        </div>
+        {character.hitDice && (
+          <div className="glass-panel-gold p-4">
+            <div className="font-cinzel text-[0.55rem] tracking-[0.15em] uppercase text-parchment/35 mb-1">
+              Hit Dice
+            </div>
+            <div className="font-cinzel text-xl text-gold">{character.hitDice}</div>
+          </div>
+        )}
+        {character.armor && character.armor !== "None" && (
+          <div className="glass-panel-gold p-4">
+            <div className="font-cinzel text-[0.55rem] tracking-[0.15em] uppercase text-parchment/35 mb-1">
+              Armor
+            </div>
+            <div className="font-body text-parchment/80 text-sm">{character.armor}</div>
+          </div>
+        )}
       </div>
+
+      {/* Attacks */}
+      {character.weapons?.length > 0 && (
+        <div>
+          <h3 className="section-header">Attacks</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gold/10">
+                  <th className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 text-left py-2 pr-3">Weapon</th>
+                  <th className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 text-center py-2 px-3">To Hit</th>
+                  <th className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 text-center py-2 px-3">Damage</th>
+                  <th className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 text-left py-2 pl-3">Properties</th>
+                </tr>
+              </thead>
+              <tbody>
+                {character.weapons.map((weapon, i) => {
+                  const isFinesse = weapon.properties?.some((p) => p.toLowerCase() === "finesse");
+                  const strMod = calculateModifier(character.stats.STR);
+                  const dexMod = calculateModifier(character.stats.DEX);
+                  const abilityMod = isFinesse ? Math.max(strMod, dexMod) : strMod;
+                  const toHit = abilityMod + character.proficiencyBonus;
+                  return (
+                    <tr key={i} className="border-b border-gold/5">
+                      <td className="font-body text-parchment/80 py-2.5 pr-3">{weapon.name}</td>
+                      <td className="font-mono text-gold text-center py-2.5 px-3">+{toHit}</td>
+                      <td className="font-mono text-parchment/70 text-center py-2.5 px-3">
+                        {weapon.damage} {weapon.damageType}
+                      </td>
+                      <td className="font-body text-parchment/45 text-xs py-2.5 pl-3">
+                        {weapon.properties?.join(", ") || "—"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
       <div>
         <h3 className="section-header">Class Features</h3>
@@ -213,6 +362,25 @@ function SpellcastingTab({ character }: { character: DndCharacter }) {
         )}
       </div>
 
+      {/* Cantrips */}
+      {character.cantrips?.length > 0 && (
+        <div>
+          <h3 className="section-header">Cantrips</h3>
+          <div className="space-y-2">
+            {character.cantrips.map((cantrip, i) => (
+              <div key={i} className="glass-panel-gold p-3.5">
+                <h4 className="font-cinzel text-xs tracking-wider text-gold mb-0.5">
+                  {cantrip.name}
+                </h4>
+                <p className="font-body text-parchment/40 text-xs italic leading-relaxed">
+                  {cantrip.reason}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div>
         <h3 className="section-header">Spell Slots</h3>
         <div className="glass-panel-gold p-5">
@@ -234,6 +402,68 @@ function SpellcastingTab({ character }: { character: DndCharacter }) {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Equipment Tab ──
+
+function EquipmentTab({ character }: { character: DndCharacter }) {
+  return (
+    <div className="space-y-8">
+      {/* Gold */}
+      {character.gold != null && (
+        <div className="glass-panel-gold p-4 flex items-center justify-between">
+          <span className="font-cinzel text-[0.6rem] tracking-[0.12em] uppercase text-parchment/50">Gold</span>
+          <span className="font-cinzel text-xl text-gold font-bold">{character.gold} gp</span>
+        </div>
+      )}
+
+      {/* Equipment List */}
+      {character.equipment?.length > 0 && (
+        <div>
+          <h3 className="section-header">Gear</h3>
+          <div className="space-y-1.5">
+            {character.equipment.map((item, i) => (
+              <div key={i} className="flex items-center justify-between glass-panel-gold px-4 py-2.5">
+                <span className="font-body text-parchment/80 text-sm">{item.name}</span>
+                {item.quantity > 1 && (
+                  <span className="font-mono text-parchment/40 text-xs">x{item.quantity}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Armor & Weapon Proficiencies */}
+      {(character.armorProficiencies?.length > 0 || character.weaponProficiencies?.length > 0) && (
+        <div>
+          <h3 className="section-header">Armor & Weapon Proficiencies</h3>
+          <div className="space-y-3">
+            {character.armorProficiencies?.length > 0 && (
+              <div>
+                <div className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 mb-2">Armor</div>
+                <div className="flex flex-wrap gap-2">
+                  {character.armorProficiencies.map((prof) => (
+                    <span key={prof} className="px-3 py-1 rounded-sm border border-gold/15 bg-gold/5 font-body text-parchment/75 text-sm">{prof}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {character.weaponProficiencies?.length > 0 && (
+              <div>
+                <div className="font-cinzel text-[0.55rem] tracking-[0.12em] uppercase text-parchment/40 mb-2">Weapons</div>
+                <div className="flex flex-wrap gap-2">
+                  {character.weaponProficiencies.map((prof) => (
+                    <span key={prof} className="px-3 py-1 rounded-sm border border-gold/15 bg-gold/5 font-body text-parchment/75 text-sm">{prof}</span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

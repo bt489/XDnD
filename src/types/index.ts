@@ -45,6 +45,27 @@ export interface SignatureAbility {
   description: string;
 }
 
+export interface EquipmentItem {
+  name: string;
+  quantity: number;
+}
+
+export interface WeaponInfo {
+  name: string;
+  damage: string;
+  damageType: string;
+  properties: string[];
+}
+
+export interface CharacterAppearance {
+  age: string;
+  height: string;
+  weight: string;
+  eyes: string;
+  hair: string;
+  skin: string;
+}
+
 export type StatName = "STR" | "DEX" | "CON" | "INT" | "WIS" | "CHA";
 
 export type Stats = Record<StatName, number>;
@@ -81,6 +102,19 @@ export interface DndCharacter {
   ideal: string;
   bond: string;
   personalityTraits: string[];
+  cantrips: SpellInfo[];
+  equipment: EquipmentItem[];
+  weapons: WeaponInfo[];
+  armor: string;
+  languages: string[];
+  toolProficiencies: string[];
+  armorProficiencies: string[];
+  weaponProficiencies: string[];
+  racialTraits: FeatureInfo[];
+  appearance: CharacterAppearance;
+  hitDice: string;
+  gold: number;
+  avatarUrl?: string;
 }
 
 // ── API Types ──

@@ -30,6 +30,13 @@ HARD MECHANICAL RULES — NEVER VIOLATE:
 - Non-caster classes (Barbarian, Fighter, Monk, Rogue) must have null spellcastingAbility and all spell slots set to 0
 - Saving throw proficiencies must match the class's two saving throws
 - AC = 10 + DEX modifier (unless class features say otherwise, e.g. Barbarian Unarmored Defense)
+- Hit Dice = level + "d" + class hit die size (e.g. "7d10" for a level 7 Fighter)
+- Cantrips known: Wizards/Sorcerers 4-5, Clerics/Druids 3, Bards 2-3, Warlocks 3-4. Non-casters get 0 cantrips.
+- Languages must include Common plus any racial languages (e.g. Elvish for Elves, Dwarvish for Dwarves)
+- Equipment should be thematic and appropriate for the character's class and background
+- Weapons must match class weapon proficiencies
+- Armor proficiencies: Barbarian (light/medium/shields), Bard (light), Cleric (light/medium/shields), Druid (light/medium/shields, no metal), Fighter (all armor/shields), Monk (none), Paladin (all armor/shields), Ranger (light/medium/shields), Rogue (light), Sorcerer (none), Warlock (light), Wizard (none)
+- Weapon proficiencies: Barbarian/Fighter/Paladin/Ranger (simple + martial), others (simple only, plus class-specific)
 
 CHARACTER CREATION GUIDELINES:
 - The character should feel like "this person, but in a fantasy world"
@@ -67,11 +74,23 @@ You must respond with ONLY valid JSON matching this exact schema (no markdown, n
   "spellcastingAbility": "<STAT or null>",
   "spellSlots": { "1st": <n>, "2nd": <n>, "3rd": <n>, "4th": <n>, "5th": <n> },
   "spellsKnown": [{ "name": "<spell>", "reason": "<why>" }, ...],
+  "cantrips": [{ "name": "<cantrip>", "reason": "<why>" }, ...],
   "features": [{ "name": "<feature>", "description": "<desc>" }, ...],
   "signatureAbility": { "name": "<unique name>", "description": "<what it does, flavored for this person>" },
   "backstory": "<2-3 paragraph fantasy backstory>",
   "flaw": "<honest character flaw>",
   "ideal": "<what they strive for>",
   "bond": "<what they're connected to>",
-  "personalityTraits": ["<trait>", "<trait>"]
+  "personalityTraits": ["<trait>", "<trait>"],
+  "equipment": [{ "name": "<item>", "quantity": <n> }, ...],
+  "weapons": [{ "name": "<weapon>", "damage": "<e.g. 1d8>", "damageType": "<e.g. slashing>", "properties": ["<e.g. versatile>", ...] }, ...],
+  "armor": "<currently worn armor or 'None'>",
+  "languages": ["Common", "<racial language>", ...],
+  "toolProficiencies": ["<tool>", ...],
+  "armorProficiencies": ["<e.g. Light armor>", ...],
+  "weaponProficiencies": ["<e.g. Simple weapons>", ...],
+  "racialTraits": [{ "name": "<trait>", "description": "<desc>" }, ...],
+  "appearance": { "age": "<age>", "height": "<height>", "weight": "<weight>", "eyes": "<eye color>", "hair": "<hair>", "skin": "<skin>" },
+  "hitDice": "<e.g. 7d10>",
+  "gold": <starting gold number>
 }`;

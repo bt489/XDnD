@@ -50,6 +50,36 @@ const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
           <p className="font-body text-ink-mid/40 text-sm mt-0.5 italic">@{handle}</p>
         </div>
 
+        {/* ─── Avatar ─── */}
+        <div className="flex justify-center mb-5 relative z-[2]">
+          <div
+            className="w-28 h-36 rounded overflow-hidden"
+            style={{
+              border: "2px solid rgba(160, 125, 46, 0.3)",
+              boxShadow: "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(160, 125, 46, 0.08)",
+              background: "linear-gradient(135deg, rgba(160, 125, 46, 0.08), rgba(26, 14, 8, 0.04))",
+            }}
+          >
+            {character.avatarUrl ? (
+              <img
+                src={character.avatarUrl}
+                alt={`${character.name} portrait`}
+                crossOrigin="anonymous"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div
+                className="w-full h-full"
+                style={{
+                  background: "linear-gradient(135deg, rgba(160, 125, 46, 0.12), rgba(26, 14, 8, 0.06))",
+                  animation: "shimmer 2s ease-in-out infinite",
+                  backgroundSize: "200% 100%",
+                }}
+              />
+            )}
+          </div>
+        </div>
+
         {/* ─── Class Badge ─── */}
         <div className="flex justify-center mb-4 relative z-[2]">
           <div
@@ -73,6 +103,18 @@ const ShareableCard = forwardRef<HTMLDivElement, ShareableCardProps>(
             )}
           </div>
         </div>
+
+        {/* ─── Appearance Line ─── */}
+        {character.appearance && Object.values(character.appearance).some(Boolean) && (
+          <p className="text-center font-body text-ink-mid/45 text-xs italic mb-2 relative z-[2]">
+            {[
+              character.appearance.age && `${character.appearance.age} years old`,
+              character.appearance.height,
+              character.appearance.hair && `${character.appearance.hair} hair`,
+              character.appearance.eyes && `${character.appearance.eyes} eyes`,
+            ].filter(Boolean).join(" · ")}
+          </p>
+        )}
 
         {/* ─── Alignment ─── */}
         <p className="text-center font-body text-ink-mid/50 text-sm italic mb-5 relative z-[2]">

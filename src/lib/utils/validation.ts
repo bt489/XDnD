@@ -129,6 +129,7 @@ export function fixCommonErrors(char: DndCharacter): DndCharacter {
   if (NON_CASTER_CLASSES.includes(fixed.class)) {
     fixed.spellcastingAbility = null;
     fixed.spellsKnown = [];
+    fixed.cantrips = [];
   }
 
   // Fix saving throws
@@ -158,6 +159,23 @@ export function fixCommonErrors(char: DndCharacter): DndCharacter {
   } else {
     fixed.ac = 10 + dexMod;
   }
+
+  // Fix hit dice
+  const hitDie = HIT_DICE[fixed.class] || 8;
+  fixed.hitDice = `${fixed.level}d${hitDie}`;
+
+  // Default empty arrays/values for new fields if missing
+  fixed.cantrips = fixed.cantrips || [];
+  fixed.equipment = fixed.equipment || [];
+  fixed.weapons = fixed.weapons || [];
+  fixed.armor = fixed.armor || "None";
+  fixed.languages = fixed.languages || ["Common"];
+  fixed.toolProficiencies = fixed.toolProficiencies || [];
+  fixed.armorProficiencies = fixed.armorProficiencies || [];
+  fixed.weaponProficiencies = fixed.weaponProficiencies || [];
+  fixed.racialTraits = fixed.racialTraits || [];
+  fixed.appearance = fixed.appearance || { age: "", height: "", weight: "", eyes: "", hair: "", skin: "" };
+  fixed.gold = fixed.gold ?? 0;
 
   return fixed;
 }
