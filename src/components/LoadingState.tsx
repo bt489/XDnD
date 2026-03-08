@@ -33,34 +33,34 @@ interface FaceDef {
 
 const D20_FACES: FaceDef[] = [];
 
-// Top cap: 5 faces (apex up), azimuths offset 36° from 0
+// Top cap: 5 faces (apex up), normals tilt upward (+rotateX)
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_CAP}deg) translateZ(${TZ}px) ${CENTROID_FIX}`,
+    transform: `rotateY(${36 + n * 72}deg) rotateX(${POLAR_CAP}deg) translateZ(${TZ}px) ${CENTROID_FIX}`,
     colorClass: "d20-tc",
     inverted: false,
   });
 }
-// Upper band: 5 faces (inverted), same azimuths as top cap
+// Upper band: 5 faces (inverted), normals tilt slightly upward
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_BAND}deg) translateZ(${TZ}px) rotateZ(180deg) ${CENTROID_FIX}`,
+    transform: `rotateY(${36 + n * 72}deg) rotateX(${POLAR_BAND}deg) translateZ(${TZ}px) rotateZ(180deg) ${CENTROID_FIX}`,
     colorClass: "d20-ub",
     inverted: true,
   });
 }
-// Lower band: 5 faces (apex up), azimuths at 0° multiples
+// Lower band: 5 faces (apex up), normals tilt slightly downward
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_BAND}deg) translateZ(${TZ}px) ${CENTROID_FIX}`,
+    transform: `rotateY(${n * 72}deg) rotateX(-${POLAR_BAND}deg) translateZ(${TZ}px) ${CENTROID_FIX}`,
     colorClass: "d20-lb",
     inverted: false,
   });
 }
-// Bottom cap: 5 faces (inverted), azimuths at 0° multiples
+// Bottom cap: 5 faces (inverted), normals tilt downward (-rotateX)
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_CAP}deg) translateZ(${TZ}px) rotateZ(180deg) ${CENTROID_FIX}`,
+    transform: `rotateY(${n * 72}deg) rotateX(-${POLAR_CAP}deg) translateZ(${TZ}px) rotateZ(180deg) ${CENTROID_FIX}`,
     colorClass: "d20-bc",
     inverted: true,
   });
