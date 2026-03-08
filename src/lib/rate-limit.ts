@@ -100,4 +100,8 @@ export const RATE_LIMITS: Record<string, RateLimitConfig[]> = {
   "/api/receive": [
     { endpoint: "/api/receive-post", maxRequests: 30, windowSeconds: 15 * 60 },
   ],
+  "/api/generate-avatar": [
+    { endpoint: "/api/generate-avatar", maxRequests: 3, windowSeconds: 15 * 60 },
+    { endpoint: "/api/generate-avatar-daily", maxRequests: 10, windowSeconds: 24 * 60 * 60 },
+  ],
 };

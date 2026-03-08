@@ -47,6 +47,27 @@ export default function Home() {
         if (data.success && data.character) {
           setCharacter(data.character);
           setAppState("done");
+
+          // Fire avatar generation in background
+          fetch("/api/generate-avatar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              race: data.character.race,
+              characterClass: data.character.class,
+              subclass: data.character.subclass,
+              alignment: data.character.alignment,
+            }),
+          })
+            .then((r) => r.json())
+            .then((avatarData) => {
+              if (avatarData.success && avatarData.imageUrl) {
+                setCharacter((prev) =>
+                  prev ? { ...prev, avatarUrl: avatarData.imageUrl } : prev
+                );
+              }
+            })
+            .catch(() => {});
         } else {
           setError(data.error || "Failed to generate character");
           setAppState("error");

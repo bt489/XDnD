@@ -59,5 +59,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/generate", "/api/scrape", "/api/scrape-nitter", "/api/receive"],
+  matcher: ["/api/generate", "/api/generate-avatar", "/api/scrape", "/api/scrape-nitter", "/api/receive"],
 };
