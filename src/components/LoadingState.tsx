@@ -105,16 +105,18 @@ export default function LoadingState({ stage }: LoadingStateProps) {
         <div className="absolute inset-0 scale-150 rounded-full bg-arcane/10 blur-2xl" />
 
         <div className="d20-scene relative z-10">
-          <div className="d20-cube">
-            {D20_FACES.map((face, i) => (
-              <div
-                key={i}
-                className={`d20-face ${face.colorClass}${face.inverted ? " d20-inv" : ""}`}
-                style={{ transform: face.transform }}
-              >
-                <span>{roll}</span>
-              </div>
-            ))}
+          <div className="d20-tilt">
+            <div className="d20-cube">
+              {D20_FACES.map((face, i) => (
+                <div
+                  key={i}
+                  className={`d20-face ${face.colorClass}${face.inverted ? " d20-inv" : ""}`}
+                  style={{ transform: face.transform }}
+                >
+                  <span>{roll}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
