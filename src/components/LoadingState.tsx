@@ -19,7 +19,7 @@ const FLAVOR_TEXTS = [
 // Polar angles derived from icosahedron vertex positions on unit sphere
 const POLAR_CAP = 52.7;   // degrees from equator to top/bottom cap faces
 const POLAR_BAND = 10.8;  // degrees from equator to upper/lower band faces
-const TZ = 36;             // translateZ = approximate inradius (px)
+const TZ = 38;             // translateZ = inradius for edge length 50px
 
 interface FaceDef {
   transform: string;
