@@ -15,6 +15,53 @@ const FLAVOR_TEXTS = [
   "Inscribing the character scroll...",
 ];
 
+// Icosahedron face geometry: 4 rings of 5 faces each
+// Polar angles derived from icosahedron vertex positions on unit sphere
+const POLAR_CAP = 52.7;   // degrees from equator to top/bottom cap faces
+const POLAR_BAND = 10.8;  // degrees from equator to upper/lower band faces
+const TZ = 36;             // translateZ = approximate inradius (px)
+
+interface FaceDef {
+  transform: string;
+  colorClass: string;
+  inverted: boolean;
+}
+
+const D20_FACES: FaceDef[] = [];
+
+// Top cap: 5 faces (apex up), azimuths offset 36° from 0
+for (let n = 0; n < 5; n++) {
+  D20_FACES.push({
+    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_CAP}deg) translateZ(${TZ}px)`,
+    colorClass: "d20-tc",
+    inverted: false,
+  });
+}
+// Upper band: 5 faces (inverted), same azimuths as top cap
+for (let n = 0; n < 5; n++) {
+  D20_FACES.push({
+    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_BAND}deg) translateZ(${TZ}px) rotateZ(180deg)`,
+    colorClass: "d20-ub",
+    inverted: true,
+  });
+}
+// Lower band: 5 faces (apex up), azimuths at 0° multiples
+for (let n = 0; n < 5; n++) {
+  D20_FACES.push({
+    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_BAND}deg) translateZ(${TZ}px)`,
+    colorClass: "d20-lb",
+    inverted: false,
+  });
+}
+// Bottom cap: 5 faces (inverted), azimuths at 0° multiples
+for (let n = 0; n < 5; n++) {
+  D20_FACES.push({
+    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_CAP}deg) translateZ(${TZ}px) rotateZ(180deg)`,
+    colorClass: "d20-bc",
+    inverted: true,
+  });
+}
+
 interface LoadingStateProps {
   stage: "scraping" | "generating";
 }
@@ -55,18 +102,15 @@ export default function LoadingState({ stage }: LoadingStateProps) {
 
         <div className="d20-scene relative z-10">
           <div className="d20-cube">
-            {/* Top faces */}
-            <div className="d20-tri d20-tri-1"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-2"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-3"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-4"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-5"><span>{roll}</span></div>
-            {/* Bottom faces */}
-            <div className="d20-tri d20-tri-6"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-7"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-8"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-9"><span>{roll}</span></div>
-            <div className="d20-tri d20-tri-10"><span>{roll}</span></div>
+            {D20_FACES.map((face, i) => (
+              <div
+                key={i}
+                className={`d20-face ${face.colorClass}${face.inverted ? " d20-inv" : ""}`}
+                style={{ transform: face.transform }}
+              >
+                <span>{roll}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

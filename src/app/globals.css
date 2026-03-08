@@ -143,12 +143,12 @@ body {
   outline-offset: 4px;
 }
 
-/* ── 3D D20 Die ── */
+/* ── 3D D20 Die (Icosahedron) ── */
 
 .d20-scene {
-  width: 100px;
-  height: 100px;
-  perspective: 400px;
+  width: 110px;
+  height: 110px;
+  perspective: 500px;
 }
 
 .d20-cube {
@@ -156,80 +156,47 @@ body {
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  animation: d20Spin 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: d20Spin 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.35));
 }
 
-.d20-tri {
+/* Each triangular face — clip-path equilateral triangle */
+.d20-face {
   position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 43px solid transparent;
-  border-right: 43px solid transparent;
-  border-bottom: 75px solid;
+  width: 50px;
+  height: 43px;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   left: 50%;
   top: 50%;
-  margin-left: -43px;
-  margin-top: -37px;
-  backface-visibility: visible;
+  margin-left: -25px;
+  margin-top: -21.5px;
+  backface-visibility: hidden;
 }
 
-.d20-tri span {
+.d20-face span {
   position: absolute;
-  top: 18px;
-  left: -12px;
-  width: 24px;
-  text-align: center;
+  top: 62%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-family: var(--font-cinzel), serif;
   font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--ink);
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+  font-size: 0.7rem;
+  color: rgba(26, 14, 8, 0.7);
+  text-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.4);
   pointer-events: none;
 }
 
-/* Upper ring of faces */
-.d20-tri-1 {
-  border-bottom-color: #d4a843;
-  transform: rotateY(0deg) rotateX(30deg) translateZ(42px);
-}
-.d20-tri-2 {
-  border-bottom-color: #c9a03d;
-  transform: rotateY(72deg) rotateX(30deg) translateZ(42px);
-}
-.d20-tri-3 {
-  border-bottom-color: #deb34d;
-  transform: rotateY(144deg) rotateX(30deg) translateZ(42px);
-}
-.d20-tri-4 {
-  border-bottom-color: #b8922e;
-  transform: rotateY(216deg) rotateX(30deg) translateZ(42px);
-}
-.d20-tri-5 {
-  border-bottom-color: #e8c76a;
-  transform: rotateY(288deg) rotateX(30deg) translateZ(42px);
+/* Inverted faces: counter-rotate text so it reads correctly */
+.d20-inv span {
+  top: 38%;
+  transform: translate(-50%, -50%) rotateZ(180deg);
 }
 
-/* Lower ring of faces (inverted) */
-.d20-tri-6 {
-  border-bottom-color: #a07d2e;
-  transform: rotateY(36deg) rotateX(-30deg) translateZ(42px) rotateZ(180deg);
-}
-.d20-tri-7 {
-  border-bottom-color: #c49a38;
-  transform: rotateY(108deg) rotateX(-30deg) translateZ(42px) rotateZ(180deg);
-}
-.d20-tri-8 {
-  border-bottom-color: #d4a843;
-  transform: rotateY(180deg) rotateX(-30deg) translateZ(42px) rotateZ(180deg);
-}
-.d20-tri-9 {
-  border-bottom-color: #deb34d;
-  transform: rotateY(252deg) rotateX(-30deg) translateZ(42px) rotateZ(180deg);
-}
-.d20-tri-10 {
-  border-bottom-color: #b8922e;
-  transform: rotateY(324deg) rotateX(-30deg) translateZ(42px) rotateZ(180deg);
-}
+/* Face colors — 4 shades simulate top-down lighting on metallic gold */
+.d20-tc { background: #dbb44c; }
+.d20-ub { background: #c9a03d; }
+.d20-lb { background: #b08a2e; }
+.d20-bc { background: #96782a; }
 
 @keyframes d20Spin {
   0% {
