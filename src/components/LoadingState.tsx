@@ -20,6 +20,10 @@ const FLAVOR_TEXTS = [
 const POLAR_CAP = 52.7;   // degrees from equator to top/bottom cap faces
 const POLAR_BAND = 10.8;  // degrees from equator to upper/lower band faces
 const TZ = 38;             // translateZ = inradius for edge length 50px
+// The clip-path triangle centroid is 7.17px below the element center.
+// Append translateY(-7.17px) to every face transform to align the centroid
+// with the transform pivot (element center) so faces don't overlap.
+const CENTROID_FIX = "translateY(-7.17px)";
 
 interface FaceDef {
   transform: string;
@@ -32,7 +36,7 @@ const D20_FACES: FaceDef[] = [];
 // Top cap: 5 faces (apex up), azimuths offset 36° from 0
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_CAP}deg) translateZ(${TZ}px)`,
+    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_CAP}deg) translateZ(${TZ}px) ${CENTROID_FIX}`,
     colorClass: "d20-tc",
     inverted: false,
   });
@@ -40,7 +44,7 @@ for (let n = 0; n < 5; n++) {
 // Upper band: 5 faces (inverted), same azimuths as top cap
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_BAND}deg) translateZ(${TZ}px) rotateZ(180deg)`,
+    transform: `rotateY(${36 + n * 72}deg) rotateX(-${POLAR_BAND}deg) translateZ(${TZ}px) rotateZ(180deg) ${CENTROID_FIX}`,
     colorClass: "d20-ub",
     inverted: true,
   });
@@ -48,7 +52,7 @@ for (let n = 0; n < 5; n++) {
 // Lower band: 5 faces (apex up), azimuths at 0° multiples
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_BAND}deg) translateZ(${TZ}px)`,
+    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_BAND}deg) translateZ(${TZ}px) ${CENTROID_FIX}`,
     colorClass: "d20-lb",
     inverted: false,
   });
@@ -56,7 +60,7 @@ for (let n = 0; n < 5; n++) {
 // Bottom cap: 5 faces (inverted), azimuths at 0° multiples
 for (let n = 0; n < 5; n++) {
   D20_FACES.push({
-    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_CAP}deg) translateZ(${TZ}px) rotateZ(180deg)`,
+    transform: `rotateY(${n * 72}deg) rotateX(${POLAR_CAP}deg) translateZ(${TZ}px) rotateZ(180deg) ${CENTROID_FIX}`,
     colorClass: "d20-bc",
     inverted: true,
   });
