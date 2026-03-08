@@ -20,12 +20,22 @@ async function ensureAvatarTable(db: ReturnType<typeof createClient>) {
   await db.execute(`
     CREATE TABLE IF NOT EXISTS avatar_images (
       id TEXT PRIMARY KEY,
+      traits_hash TEXT,
       data TEXT NOT NULL,
       content_type TEXT NOT NULL,
       created_at INTEGER NOT NULL
     )
   `);
+  // Add traits_hash column to existing tables (no-op if already present)
+  await db.execute("ALTER TABLE avatar_images ADD COLUMN traits_hash TEXT").catch(() => {});
   tableCreated = true;
+}
+
+function traitsHash(race: string, characterClass: string, subclass: string | undefined, alignment: string | undefined): string {
+  const key = [race, characterClass, subclass || "", alignment || "neutral"]
+    .map((s) => s.toLowerCase().trim())
+    .join("|");
+  return crypto.createHash("sha256").update(key).digest("hex").slice(0, 16);
 }
 
 export async function POST(req: NextRequest) {
@@ -45,6 +55,20 @@ export async function POST(req: NextRequest) {
         { success: false, error: "Missing race or class" },
         { status: 400 }
       );
+    }
+
+    // Check cache first — reuse existing avatar for the same trait combo
+    const hash = traitsHash(race, characterClass, subclass, alignment);
+    const db = getDb();
+    if (db) {
+      await ensureAvatarTable(db);
+      const cached = await db.execute({
+        sql: "SELECT id FROM avatar_images WHERE traits_hash = ? LIMIT 1",
+        args: [hash],
+      });
+      if (cached.rows.length > 0) {
+        return NextResponse.json({ success: true, imageUrl: `/api/avatar/${cached.rows[0].id}` });
+      }
     }
 
     const subclassStr = subclass ? ` (${subclass})` : "";
@@ -86,18 +110,15 @@ export async function POST(req: NextRequest) {
     const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
     const base64Data = imageBuffer.toString("base64");
 
-    const db = getDb();
     if (!db) {
       // Fallback: return temp URL if DB not configured
       return NextResponse.json({ success: true, imageUrl: tempUrl });
     }
 
-    await ensureAvatarTable(db);
-
     const id = crypto.randomUUID();
     await db.execute({
-      sql: "INSERT INTO avatar_images (id, data, content_type, created_at) VALUES (?, ?, ?, ?)",
-      args: [id, base64Data, contentType, Math.floor(Date.now() / 1000)],
+      sql: "INSERT INTO avatar_images (id, traits_hash, data, content_type, created_at) VALUES (?, ?, ?, ?, ?)",
+      args: [id, hash, base64Data, contentType, Math.floor(Date.now() / 1000)],
     });
 
     return NextResponse.json({ success: true, imageUrl: `/api/avatar/${id}` });
